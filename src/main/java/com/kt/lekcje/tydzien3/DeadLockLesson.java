@@ -1,4 +1,4 @@
-package com.kt.lekcje;
+package com.kt.lekcje.tydzien3;
 
 class DeadLockLesson {
     static Object lock1 = new Object();

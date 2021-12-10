@@ -1,21 +1,21 @@
-package com.kt.lekcje;
+package com.kt.lekcje.tydzien3;
+
 
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-class LockLesson3 {
-    LockLesson3() {
+class LockLesson2 {
+    LockLesson2() {
     }
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Starting..");
-        final LockLesson3.Inventory inventory = new LockLesson3.Inventory();
-        Runnable writeTask = new Runnable() {
+        final LockLesson2.Inventory inventory = new LockLesson2.Inventory();
+        Runnable task = new Runnable() {
             public void run() {
                 for(int i = 0; i < 10; ++i) {
                     try {
@@ -27,41 +27,25 @@ class LockLesson3 {
 
             }
         };
-        Runnable readTask = new Runnable() {
-            public void run() {
-                for(int i = 0; i < 10; ++i) {
-                    Integer quantity = inventory.howMany("pomidory");
-                    System.out.println("There is " + quantity + " of pomidors");
-                }
-
-            }
-        };
-        Thread t0 = new Thread(writeTask);
-        Thread t1 = new Thread(readTask);
-        Thread t2 = new Thread(readTask);
-        Thread t3 = new Thread(readTask);
+        Thread t0 = new Thread(task);
+        Thread t1 = new Thread(task);
         t0.start();
         t1.start();
-        t2.start();
-        t3.start();
         t0.join();
         t1.join();
-        t2.join();
-        t3.join();
         System.out.println("There is: " + inventory.howMany("pomidor") + " of pomidor in invertory");
         System.out.println("Done");
     }
 
     static class Inventory {
         Map<String, Integer> state = new HashMap();
-        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+        Lock lock = new ReentrantLock();
 
         Inventory() {
         }
 
         public void put(String item, Integer quantity) throws InterruptedException {
-            WriteLock writeLock = this.lock.writeLock();
-            boolean tryLock = writeLock.tryLock(100L, TimeUnit.MILLISECONDS);
+            boolean tryLock = this.lock.tryLock(100L, TimeUnit.MILLISECONDS);
             if (tryLock) {
                 try {
                     System.out.println(Thread.currentThread().getName() + " Got lock...");
@@ -71,7 +55,7 @@ class LockLesson3 {
                     var10000.println(var10001 + " There is: " + this.howMany("pomidor") + " of pomidor in invertory");
                     this.state.put(item, quantity);
                 } finally {
-                    writeLock.unlock();
+                    this.lock.unlock();
                 }
             } else {
                 System.out.println(Thread.currentThread().getName() + " Unable to get lock...");
@@ -80,27 +64,19 @@ class LockLesson3 {
         }
 
         public Integer howMany(String item) {
-            ReadLock readLock = this.lock.readLock();
-            if (readLock.tryLock()) {
-                Integer var4;
+            if (this.lock.tryLock()) {
+                Integer var3;
                 try {
-                    System.out.println(Thread.currentThread().getName() + " READ-LOCK obtained...");
-                    Thread.sleep(100L);
                     Integer quantity = (Integer)this.state.get(item);
-                    var4 = quantity;
-                } catch (InterruptedException var8) {
-                    var8.printStackTrace();
-                    return -1;
+                    var3 = quantity;
                 } finally {
-                    System.out.println(Thread.currentThread().getName() + " READ-LOCK released...");
-                    readLock.unlock();
+                    this.lock.unlock();
                 }
 
-                return var4;
+                return var3;
             } else {
                 return -1;
             }
         }
     }
 }
-

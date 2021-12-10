@@ -1,4 +1,4 @@
-package com.kt.lekcje;
+package com.kt.lekcje.tydzien3;
 
 class SynchronizedLesson {
     SynchronizedLesson() {

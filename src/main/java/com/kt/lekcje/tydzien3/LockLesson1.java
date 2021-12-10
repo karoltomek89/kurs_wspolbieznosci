@@ -1,4 +1,4 @@
-package com.kt.lekcje;
+package com.kt.lekcje.tydzien3;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
