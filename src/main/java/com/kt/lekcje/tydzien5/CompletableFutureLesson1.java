@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-class CompletetableFutureLesson1 {
+class CompletableFutureLesson1 {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         System.out.println(Thread.currentThread().getName() + " Starting...");
