@@ -20,14 +20,14 @@ class Zad1 {
 
         Runnable producer = () -> {
             try {
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     Thread.sleep(100 + random.nextInt(1500));
                     print("Adding cacheObject object");
                     CacheObject cacheObject = new CacheObject(Instant.now());
                     queue.put(cacheObject);
                 }
             } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
+                Thread.currentThread().interrupt();
             }
         };
 
@@ -35,14 +35,14 @@ class Zad1 {
             @Override
             public void run() {
                 try {
-                    while (true) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         CacheObject cacheObject = queue.take();
                         print("Object consumed, time in cache: "
                                 + Duration.between(Instant.now(), cacheObject.createdTime).toMillis() + " ms ");
                         Thread.sleep(100 + random.nextInt(2500));
                     }
                 } catch (Exception e) {
-                    throw new IllegalStateException(e);
+                    Thread.currentThread().interrupt();
                 }
             }
         };
@@ -50,7 +50,7 @@ class Zad1 {
         Runnable remover = new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     try {
                         Thread.sleep(100);
                         if (queue.size() > 0) {
@@ -63,7 +63,7 @@ class Zad1 {
                             }
                         }
                     } catch (InterruptedException e) {
-                        throw new IllegalStateException(e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
