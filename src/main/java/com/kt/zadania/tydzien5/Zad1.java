@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 class Zad1 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         while (true) {
             System.out.println('\n' + Thread.currentThread().getName() + " Starting...");
@@ -34,11 +34,7 @@ class Zad1 {
                     }
                 });
 
-                try {
                     future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
 
                 System.out.println(Thread.currentThread().getName() + " DONE");
             } else {
@@ -46,11 +42,13 @@ class Zad1 {
 
             }
         }
+
     }
+
+    final static Random random = new Random();
 
     static class AsyncTask {
         private String result;
-        Random random = new Random();
 
         AsyncTask(String result) {
             this.result = result;
